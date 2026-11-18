@@ -1,0 +1,258 @@
+fileFormatVersion: 2
+guid: 77be853a59a51d944b8d3f262cab6185
+ModelImporter:
+  serializedVersion: 24000
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Aluminium_Brushed_X
+    second: {fileID: 2100000, guid: 63c4e6d8660674b46a1afdea086a0ebb, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Aluminium_Brushed_Z
+    second: {fileID: 2100000, guid: 72e38a6aeca2ed440bef84ef8dc9cbf6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Aluminium_CastSatin
+    second: {fileID: 2100000, guid: e6f48bc29f73da3449d23d79f5b41a78, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Aluminium_Polished
+    second: {fileID: 2100000, guid: 2b2ff2c12714b834fa4185b80fccb444, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Anodized_Black
+    second: {fileID: 2100000, guid: 5994ec967d28ecc4aa73a6c0296c7843, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Anodized_Gold
+    second: {fileID: 2100000, guid: f01556e7190a12f47b35bb151b9343f1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Anodized_Red
+    second: {fileID: 2100000, guid: 90ad016bb0a098347a4508d435b5b4c1, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Braided_Steel
+    second: {fileID: 2100000, guid: 3bcc6d8e78770c14b8868f21a1e5ad53, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Brake_PadCompound
+    second: {fileID: 2100000, guid: 9322bbd8035afcc4aa575f7575b30394, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: CarbonFibre_Gloss
+    second: {fileID: 2100000, guid: 37ae03ae82c335b49871dbc1b921daad, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Engine_Magnesium_Satin
+    second: {fileID: 2100000, guid: 306332e410a80d14b80df2676d0ca810, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Exhaust_BrushedSteel
+    second: {fileID: 2100000, guid: 3ee0ffa998b750b449799b92c7c6f6bc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Fork_TiN_Coating
+    second: {fileID: 2100000, guid: ceabe9c7af7155d4c9fe1cbfabf9cf5d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Glass_Mirror
+    second: {fileID: 2100000, guid: 34a5fb296fee28b4b803ea474bffe849, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Glass_SmokedScreen
+    second: {fileID: 2100000, guid: 3f5641f64b46eed48a007fba8a81c464, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Light_Indicator_Amber
+    second: {fileID: 2100000, guid: 759b4108bcc539f4ebe869d5cc3298b7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Light_LED_White
+    second: {fileID: 2100000, guid: 06edf61bb9e63bc46ab28a5fa751cd94, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Light_Lens_Clear
+    second: {fileID: 2100000, guid: a9b0f72d44be5cb48ad4f2a1979be486, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Light_Tail_Red
+    second: {fileID: 2100000, guid: 081b68a4471b0d045a0b661b3c687441, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Paint_GlossBlack
+    second: {fileID: 2100000, guid: 2e49a682e642a2e4e8d1d1454c29f86d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Paint_Red_MetallicClearcoat
+    second: {fileID: 2100000, guid: c0d49173e00aff5499d8762b0b988c0d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Plastic_SatinBlack
+    second: {fileID: 2100000, guid: 32cc73cc03bb6324497d40df3751d164, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Radiator_CoreBlack
+    second: {fileID: 2100000, guid: 33ea341a5ff36c147a35f4a14c9c59bf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Rubber_Grip
+    second: {fileID: 2100000, guid: 692b2f04af5ec3d4d861e9e4a969b759, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Rubber_Hose
+    second: {fileID: 2100000, guid: 7783bd13824df704ab74e937252133e2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Rubber_Tyre
+    second: {fileID: 2100000, guid: 066944a0240e91347b497b79beeba880, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Seat_Alcantara
+    second: {fileID: 2100000, guid: 50d24f0caf0b9b44bb5c51a58761636e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Steel_BrakeDisc
+    second: {fileID: 2100000, guid: 15398b7b5640b444ab6abaeb4599f5f8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Steel_Chrome
+    second: {fileID: 2100000, guid: 29f4796374bcacf4a8a125859ec59266, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Steel_DarkChain
+    second: {fileID: 2100000, guid: 4699dd27e891a75419dea8c1c6560a63, type: 2}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+    searchTexturesGlobally: 0
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 0
+    importLights: 0
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 1
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 0
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 0
+  humanoidOversampling: 1
+  avatarSetup: 0
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
