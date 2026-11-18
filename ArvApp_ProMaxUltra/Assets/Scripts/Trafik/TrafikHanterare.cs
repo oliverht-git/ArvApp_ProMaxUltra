@@ -37,6 +37,12 @@ public class TrafikHanterare : MonoBehaviour
     readonly List<TrafikBil> bilar = new List<TrafikBil>();
     System.Random rnd;
 
+    /// <summary>Alla bilar i trafiken (används t.ex. för krockkontroll).</summary>
+    public IReadOnlyList<TrafikBil> Bilar => bilar;
+
+    /// <summary>När sant står trafiken still (t.ex. efter en krock).</summary>
+    [HideInInspector] public bool pausad;
+
     void OnEnable() => MCTilt.OnVarldFlyttad += VarldFlyttad;
     void OnDisable() => MCTilt.OnVarldFlyttad -= VarldFlyttad;
 
@@ -105,7 +111,7 @@ public class TrafikHanterare : MonoBehaviour
     void Update()
     {
         float dt = Time.deltaTime;
-        if (dt <= 0f) return;   // spelet är pausat
+        if (dt <= 0f || pausad) return;   // spelet är pausat
         float mx = motorcykel.transform.position.x;
 
         foreach (var bil in bilar)

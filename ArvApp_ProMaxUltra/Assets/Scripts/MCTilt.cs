@@ -40,10 +40,66 @@ public class MCTilt : MonoBehaviour
     /// <summary>Nuvarande körfält: -1 = höger, 0 = mitten, 1 = vänster.</summary>
     public int Korfalt => korfalt;
 
+    /// <summary>Sant efter en krock: motorcykeln välter, glider och stannar, och styrningen slutar fungera.</summary>
+    public bool Kraschad { get; private set; }
+
+    /// <summary>Sant när motorcykeln har vält och glidit klart efter en krock.</summary>
+    public bool Stannat => Kraschad && kraschFart <= 0f && Mathf.Approximately(nuvarandeLutning, kraschLutning);
+
+    [Header("Krasch")]
+    [Tooltip("Hur snabbt motorcykeln bromsas när den glider på sidan (m/s²).")]
+    public float glidBromsning = 26f;
+    [Tooltip("Hur snabbt den välter (grader per sekund).")]
+    public float valtHastighet = 260f;
+
     int korfalt;
     float sidled, sidledsFart, nuvarandeLutning;
+    float kraschFart, kraschLutning, kraschGir, kraschSidled;
     Transform framhjul, bakhjul;
     const float HjulRadieFram = 0.30f, HjulRadieBak = 0.33f;
+
+    /// <summary>Anropas när motorcykeln kör in i en bil.</summary>
+    public void Krascha()
+    {
+        if (Kraschad) return;
+        Kraschad = true;
+        kraschFart = hastighet;
+        // välter åt det håll den redan lutar (eller åt ett slumpat håll om den står rakt)
+        float sida = Mathf.Abs(nuvarandeLutning) > 2f ? Mathf.Sign(nuvarandeLutning) : (UnityEngine.Random.value < 0.5f ? -1f : 1f);
+        kraschLutning = 84f * sida;
+        kraschSidled = sidledsFart * 0.6f;
+        kraschGir = (UnityEngine.Random.value - 0.5f) * 50f;
+    }
+
+    void KraschUppdatering(float dt)
+    {
+        // 1) välter snabbt över på sidan, 2) glider på sidan och bromsas av friktionen tills den stannar
+        nuvarandeLutning = Mathf.MoveTowards(nuvarandeLutning, kraschLutning, valtHastighet * dt);
+        float liggande = Mathf.Abs(nuvarandeLutning) / 84f;                       // 0 = upprätt, 1 = på sidan
+        float broms = Mathf.Lerp(glidBromsning * 0.35f, glidBromsning, liggande);   // mer friktion när den ligger ner
+        kraschFart = Mathf.MoveTowards(kraschFart, 0f, broms * dt);
+        kraschSidled = Mathf.MoveTowards(kraschSidled, 0f, 6f * dt);
+
+        float farAndel = hastighet > 0f ? kraschFart / hastighet : 0f;
+        float girNu = Mathf.MoveTowardsAngle(transform.eulerAngles.y, kraschGir, 70f * farAndel * dt);
+
+        var pos = transform.position;
+        pos.x += kraschFart * dt;
+        pos.z += kraschSidled * dt;
+        pos.y = 0.18f * liggande;                                                    // styret/kåpan bär upp den lite från marken
+        transform.SetPositionAndRotation(pos, Quaternion.Euler(0f, girNu, 0f) * Quaternion.AngleAxis(nuvarandeLutning, Vector3.right));
+
+        // hjulen snurrar av sig
+        Vector3 axel = transform.rotation * Vector3.forward;
+        if (framhjul) framhjul.Rotate(axel, -kraschFart / HjulRadieFram * Mathf.Rad2Deg * dt, Space.World);
+        if (bakhjul) bakhjul.Rotate(axel, -kraschFart / HjulRadieBak * Mathf.Rad2Deg * dt, Space.World);
+
+        if (pos.x >= 0f)
+        {
+            transform.position = pos + new Vector3(-vagPeriod, 0f, 0f);
+            OnVarldFlyttad?.Invoke(-vagPeriod);
+        }
+    }
 
     void Start()
     {
@@ -62,6 +118,7 @@ public class MCTilt : MonoBehaviour
     {
         float dt = Time.deltaTime;
         if (dt <= 0f) return;   // spelet är pausat
+        if (Kraschad) { KraschUppdatering(dt); return; }
 
         // Körfältsbyte: varje tryck flyttar ett körfält. Höger är -Z i världen.
         var tangentbord = Keyboard.current;

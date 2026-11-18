@@ -1066,6 +1066,7 @@ MonoBehaviour:
   minAvstand: 28
   motorcykel: {fileID: 1267381733}
   seed: 0
+  pausad: 0
 --- !u!4 &529454626
 Transform:
   m_ObjectHideFlags: 0
@@ -3202,6 +3203,8 @@ MonoBehaviour:
   lutningPerSidledsfart: 4.5
   styrvinkelFaktor: 0.5
   vagPeriod: 600
+  glidBromsning: 26
+  valtHastighet: 260
 --- !u!4 &1267381734 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4634058757286777898, guid: 7ec37a7fd09511149bb056926e7eb065, type: 3}
@@ -4799,6 +4802,54 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1836716444}
   m_Mesh: {fileID: 4300000, guid: 236445a863e87dd4db5eb3ad470103d2, type: 2}
+--- !u!1 &1838754564
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1838754566}
+  - component: {fileID: 1838754565}
+  m_Layer: 0
+  m_Name: Spel
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1838754565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1838754564}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 99f3565262bab754eb91d530c1cb2847, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  motorcykel: {fileID: 1267381733}
+  trafik: {fileID: 529454625}
+  motorcykelStorlek: {x: 2, y: 0.7}
+  bilStorlek: {x: 4.5, y: 1.95}
+--- !u!4 &1838754566
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1838754564}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1847287650
 GameObject:
   m_ObjectHideFlags: 0
@@ -5339,3 +5390,4 @@ SceneRoots:
   - {fileID: 755548644}
   - {fileID: 1229235347}
   - {fileID: 529454626}
+  - {fileID: 1838754566}
