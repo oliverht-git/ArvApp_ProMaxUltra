@@ -54,10 +54,15 @@ public class MCTilt : MonoBehaviour
     [Tooltip("Hur snabbt den välter (grader per sekund).")]
     public float valtHastighet = 260f;
 
+    [Header("Hjul")]
+    [Tooltip("Objektet där hjulen (Wheel_Front / Wheel_Rear) letas efter, t.ex. Motorcyklar. Tomt = motorcykeln själv.")]
+    public Transform hjulSokning;
+
     int korfalt;
     float sidled, sidledsFart, nuvarandeLutning;
     float kraschFart, kraschLutning, kraschGir, kraschSidled;
-    Transform framhjul, bakhjul;
+    // alla fram- och bakhjul, så hjulen snurrar på den motorcykel som syns (även om de andra är avstängda)
+    readonly System.Collections.Generic.List<Transform> framhjul = new(), bakhjul = new();
     const float HjulRadieFram = 0.30f, HjulRadieBak = 0.33f;
 
     /// <summary>Anropas när motorcykeln kör in i en bil.</summary>
@@ -92,9 +97,7 @@ public class MCTilt : MonoBehaviour
         transform.SetPositionAndRotation(pos, Quaternion.Euler(0f, girNu, 0f) * Quaternion.AngleAxis(nuvarandeLutning, Vector3.right));
 
         // hjulen snurrar av sig
-        Vector3 axel = transform.rotation * Vector3.forward;
-        if (framhjul) framhjul.Rotate(axel, -kraschFart / HjulRadieFram * Mathf.Rad2Deg * dt, Space.World);
-        if (bakhjul) bakhjul.Rotate(axel, -kraschFart / HjulRadieBak * Mathf.Rad2Deg * dt, Space.World);
+        SnurraHjul(kraschFart, dt);
 
         if (pos.x >= 0f)
         {
@@ -109,11 +112,21 @@ public class MCTilt : MonoBehaviour
         transform.rotation = Quaternion.identity;
         korfalt = 0;
         sidled = 0f;
-        foreach (var t in GetComponentsInChildren<Transform>())
+        framhjul.Clear(); bakhjul.Clear();
+        var sok = hjulSokning != null ? hjulSokning : transform;
+        foreach (var t in sok.GetComponentsInChildren<Transform>(true))
         {
-            if (t.name == "Wheel_Front") framhjul = t;
-            else if (t.name == "Wheel_Rear") bakhjul = t;
+            if (t.name == "Wheel_Front") framhjul.Add(t);
+            else if (t.name == "Wheel_Rear") bakhjul.Add(t);
         }
+    }
+
+    // Hjulen rullar: rotation runt axeln (motorcykelns lokala Z).
+    void SnurraHjul(float fart, float dt)
+    {
+        Vector3 axel = transform.rotation * Vector3.forward;
+        foreach (var h in framhjul) if (h) h.Rotate(axel, -fart / HjulRadieFram * Mathf.Rad2Deg * dt, Space.World);
+        foreach (var h in bakhjul) if (h) h.Rotate(axel, -fart / HjulRadieBak * Mathf.Rad2Deg * dt, Space.World);
     }
 
     void Update()
@@ -147,10 +160,7 @@ public class MCTilt : MonoBehaviour
         float gir = -Mathf.Atan2(sidledsFart, Mathf.Max(hastighet, 0.1f)) * Mathf.Rad2Deg * styrvinkelFaktor;
         transform.rotation = Quaternion.Euler(0f, gir, 0f) * Quaternion.AngleAxis(nuvarandeLutning, Vector3.right);
 
-        // Hjulen rullar: rotation runt axeln (motorcykelns lokala Z).
-        Vector3 axel = transform.rotation * Vector3.forward;
-        if (framhjul) framhjul.Rotate(axel, -hastighet / HjulRadieFram * Mathf.Rad2Deg * dt, Space.World);
-        if (bakhjul) bakhjul.Rotate(axel, -hastighet / HjulRadieBak * Mathf.Rad2Deg * dt, Space.World);
+        SnurraHjul(hastighet, dt);
 
         // Oändlig väg: hoppa tillbaka en period (vägen ser exakt likadan ut där).
         if (pos.x >= 0f)
