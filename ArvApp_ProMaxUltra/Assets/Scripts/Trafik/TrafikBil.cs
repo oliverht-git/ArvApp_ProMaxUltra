@@ -7,12 +7,20 @@ public class TrafikBil : MonoBehaviour
     public float onskadFart = 22f;
     [Tooltip("Nuvarande fart (m/s).")]
     public float fart = 22f;
-    [Tooltip("Körfältet bilen är i: -1 = höger, 0 = mitten, 1 = vänster.")]
+    [Tooltip("Körfältet bilen är i: -1, 0 eller 1 räknat från körbanans mitt.")]
     public int korfalt;
     [Tooltip("Körfältet bilen är på väg till (samma som korfalt när den inte byter).")]
     public int malKorfalt;
     [Tooltip("Ungefär hur lång tid ett körfältsbyte tar (sekunder).")]
     public float bytesTid = 2.6f;
+
+    [Header("Körbana")]
+    [Tooltip("+1 = kör åt samma håll som motorcykeln (+X), -1 = mötande trafik (-X).")]
+    public int riktning = 1;
+    [Tooltip("Z-läget för körbanans mittfil.")]
+    public float mittZ;
+    [Tooltip("Vägytans höjd vid mittfilen och lutning i sidled (vägen lutar 2,5 %).")]
+    public float vagHojd, vagLutning;
 
     [HideInInspector] public float tidTillByte;
 
@@ -33,24 +41,27 @@ public class TrafikBil : MonoBehaviour
         for (int i = 0; i < hjul.Length; i++) hjulRadie[i] = hjul[i].name.Contains("_R") ? 0.346f : 0.327f;
     }
 
+    float Y(float zz) => vagHojd + vagLutning * (zz - mittZ);
+
     public void Placera(float x, int lane, float korfaltsBredd)
     {
         korfalt = malKorfalt = lane;
-        z = lane * korfaltsBredd; zFart = 0f;
-        transform.SetPositionAndRotation(new Vector3(x, 0f, z), Quaternion.identity);
+        z = mittZ + lane * korfaltsBredd; zFart = 0f;
+        transform.SetPositionAndRotation(new Vector3(x, Y(z), z), Quaternion.Euler(0f, riktning > 0 ? 0f : 180f, 0f));
     }
 
     public void Simulera(float dt, float korfaltsBredd)
     {
-        float malZ = malKorfalt * korfaltsBredd;
+        float malZ = mittZ + malKorfalt * korfaltsBredd;
         z = Mathf.SmoothDamp(z, malZ, ref zFart, bytesTid * 0.35f);
         if (ByterKorfalt && Mathf.Abs(z - malZ) < 0.25f) korfalt = malKorfalt;
 
         var pos = transform.position;
-        pos.x += fart * dt;
-        pos.y = 0f;
+        pos.x += riktning * fart * dt;
+        pos.y = Y(z);
         pos.z = z;
-        float gir = -Mathf.Atan2(zFart, Mathf.Max(fart, 0.1f)) * Mathf.Rad2Deg;
+        // bilen pekar i färdriktningen (inklusive den lilla sidledsrörelsen vid filbyte)
+        float gir = Mathf.Atan2(-zFart, riktning * Mathf.Max(fart, 0.1f)) * Mathf.Rad2Deg;
         transform.SetPositionAndRotation(pos, Quaternion.Euler(0f, gir, 0f));
 
         // hjulen rullar runt bilens tväraxel

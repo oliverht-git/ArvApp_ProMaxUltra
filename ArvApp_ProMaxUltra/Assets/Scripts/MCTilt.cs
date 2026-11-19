@@ -33,6 +33,8 @@ public class MCTilt : MonoBehaviour
     [Header("Oändlig väg")]
     [Tooltip("Måste vara samma som vägens period (HighwayBuilder.Period).")]
     public float vagPeriod = 600f;
+    [Tooltip("Vägens lutning i sidled (höjd per meter i Z), 2,5 % enligt HighwayBuilder.")]
+    public float vagLutning = 0.025f;
 
     /// <summary>Anropas med förflyttningen i X (negativ) när världen flyttas tillbaka en period.</summary>
     public static event Action<float> OnVarldFlyttad;
@@ -86,7 +88,7 @@ public class MCTilt : MonoBehaviour
         var pos = transform.position;
         pos.x += kraschFart * dt;
         pos.z += kraschSidled * dt;
-        pos.y = 0.18f * liggande;                                                    // styret/kåpan bär upp den lite från marken
+        pos.y = vagLutning * pos.z + 0.18f * liggande;                               // styret/kåpan bär upp den lite från marken
         transform.SetPositionAndRotation(pos, Quaternion.Euler(0f, girNu, 0f) * Quaternion.AngleAxis(nuvarandeLutning, Vector3.right));
 
         // hjulen snurrar av sig
@@ -135,8 +137,8 @@ public class MCTilt : MonoBehaviour
 
         var pos = transform.position;
         pos.x += hastighet * dt;
-        pos.y = 0f;
         pos.z = sidled;
+        pos.y = vagLutning * pos.z;   // vägen lutar i sidled
 
         // Lutning: proportionell mot farten i sidled (negativ sidledsfart = mot höger = lutar höger).
         float malLutning = Mathf.Clamp(sidledsFart * lutningPerSidledsfart, -maxLutning, maxLutning);
