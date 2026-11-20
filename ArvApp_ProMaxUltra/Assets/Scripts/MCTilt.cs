@@ -2,7 +2,7 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-// Kör motorcykeln framåt längs motorvägen (+X) och byter körfält med A/D.
+// Kör motorcykeln framåt längs motorvägen (+X) och byter körfält med A/D eller med spaken på en Joy-Con.
 // Motorcykeln lutar åt det håll den byter körfält.
 //
 // Motorvägen upprepar sig var 600:e meter. När motorcykeln har kört en hel period
@@ -58,11 +58,24 @@ public class MCTilt : MonoBehaviour
     [Tooltip("Objektet där hjulen (Wheel_Front / Wheel_Rear) letas efter, t.ex. Motorcyklar. Tomt = motorcykeln själv.")]
     public Transform hjulSokning;
 
+    [Header("Joy-Con / handkontroll")]
+    [Tooltip("Hur långt spaken måste föras åt sidan (0-1) för att byta körfält.")]
+    [Range(0.2f, 0.95f)] public float spakTroskel = 0.5f;
+    [Tooltip("Använd spakens upp/ner i stället för vänster/höger (om Joy-Con:en hålls på ett annat sätt).")]
+    public bool spakAnvandYAxel = false;
+    [Tooltip("Byt håll på spaken om vänster och höger blir fel.")]
+    public bool spakInvertera = false;
+
+    int spakRiktning;   // -1 = vänster, 0 = mitten, 1 = höger (förra bildrutan)
+
     int korfalt;
     float sidled, sidledsFart, nuvarandeLutning;
     float kraschFart, kraschLutning, kraschGir, kraschSidled;
-    // alla fram- och bakhjul, så hjulen snurrar på den motorcykel som syns (även om de andra är avstängda)
-    readonly System.Collections.Generic.List<Transform> framhjul = new(), bakhjul = new();
+    // Alla fram- och bakhjul, så hjulen snurrar på den motorcykel som syns (även om de andra är avstängda).
+    // Varje hjul sparar sin hjulaxel i sitt eget koordinatsystem, så det alltid snurrar exakt runt
+    // sin egen axel. (Att snurra runt en axel i världen gör att små fel läggs ihop och hjulen vinglar.)
+    struct Hjul { public Transform t; public Vector3 axel; public float radie; }
+    readonly System.Collections.Generic.List<Hjul> hjulen = new();
     const float HjulRadieFram = 0.30f, HjulRadieBak = 0.33f;
 
     /// <summary>Anropas när motorcykeln kör in i en bil.</summary>
@@ -112,21 +125,50 @@ public class MCTilt : MonoBehaviour
         transform.rotation = Quaternion.identity;
         korfalt = 0;
         sidled = 0f;
-        framhjul.Clear(); bakhjul.Clear();
+        hjulen.Clear();
         var sok = hjulSokning != null ? hjulSokning : transform;
+        // Hjulaxeln är motorcykelns sidled (lokala Z). Räknas om till varje hjuls eget koordinatsystem.
+        Vector3 sidaIVarlden = sok.TransformDirection(Vector3.forward);
         foreach (var t in sok.GetComponentsInChildren<Transform>(true))
         {
-            if (t.name == "Wheel_Front") framhjul.Add(t);
-            else if (t.name == "Wheel_Rear") bakhjul.Add(t);
+            float radie = t.name == "Wheel_Front" ? HjulRadieFram : t.name == "Wheel_Rear" ? HjulRadieBak : 0f;
+            if (radie > 0f)
+                hjulen.Add(new Hjul { t = t, axel = t.InverseTransformDirection(sidaIVarlden).normalized, radie = radie });
         }
     }
 
-    // Hjulen rullar: rotation runt axeln (motorcykelns lokala Z).
+    // Spakens läge i sidled från -1 (vänster) till 1 (höger), från Joy-Con eller annan handkontroll.
+    // En Joy-Con läses av JoyConHanterare (fullt rapportläge). Andra joysticks läses via sin hat/stick.
+    float SpakSidled()
+    {
+        Vector2 v = Vector2.zero;
+        var jc = JoyConHanterare.Instans;
+        if (jc != null && jc.Ansluten) v = jc.Spak;
+
+        foreach (var js in Joystick.all)
+        {
+            if (jc != null && jc.ArJoyCon(js)) continue;   // dess vanliga HID-tolkning är fel i fullt läge
+            var hat = js.TryGetChildControl<UnityEngine.InputSystem.Controls.DpadControl>("hat");
+            Vector2 j = hat != null ? hat.ReadValue() : js.stick.ReadValue();
+            if (j.sqrMagnitude > v.sqrMagnitude) v = j;
+        }
+        foreach (var gp in Gamepad.all)   // t.ex. Pro Controller eller Joy-Con-par
+        {
+            Vector2 g = gp.leftStick.ReadValue();
+            Vector2 d = gp.dpad.ReadValue();
+            if (g.sqrMagnitude > v.sqrMagnitude) v = g;
+            if (d.sqrMagnitude > v.sqrMagnitude) v = d;
+        }
+
+        float x = spakAnvandYAxel ? v.y : v.x;
+        return spakInvertera ? -x : x;
+    }
+
+    // Hjulen rullar: rotation runt varje hjuls egen axel.
     void SnurraHjul(float fart, float dt)
     {
-        Vector3 axel = transform.rotation * Vector3.forward;
-        foreach (var h in framhjul) if (h) h.Rotate(axel, -fart / HjulRadieFram * Mathf.Rad2Deg * dt, Space.World);
-        foreach (var h in bakhjul) if (h) h.Rotate(axel, -fart / HjulRadieBak * Mathf.Rad2Deg * dt, Space.World);
+        foreach (var h in hjulen)
+            if (h.t) h.t.Rotate(h.axel, -fart / h.radie * Mathf.Rad2Deg * dt, Space.Self);
     }
 
     void Update()
@@ -144,6 +186,18 @@ public class MCTilt : MonoBehaviour
             if (tangentbord.aKey.wasPressedThisFrame || tangentbord.leftArrowKey.wasPressedThisFrame)
                 korfalt = Mathf.Min(korfalt + 1, korfaltPerSida);
         }
+
+        // Joy-Con / handkontroll: varje gång spaken förs ut åt sidan byts ett körfält.
+        // Spaken måste tillbaka till mitten innan nästa byte, precis som att släppa en tangent.
+        float spak = SpakSidled();
+        int riktning = spak > spakTroskel ? 1 : (spak < -spakTroskel ? -1 : 0);
+        if (riktning != 0 && spakRiktning == 0)
+        {
+            if (riktning > 0) korfalt = Mathf.Max(korfalt - 1, -korfaltPerSida);   // höger
+            else korfalt = Mathf.Min(korfalt + 1, korfaltPerSida);                // vänster
+        }
+        if (Mathf.Abs(spak) < spakTroskel * 0.6f) spakRiktning = 0;   // tillbaka i mitten (lite marginal så den inte fladdrar)
+        else if (riktning != 0) spakRiktning = riktning;
 
         float malZ = korfalt * korfaltsBredd;
         sidled = Mathf.SmoothDamp(sidled, malZ, ref sidledsFart, bytesTid * 0.4f);

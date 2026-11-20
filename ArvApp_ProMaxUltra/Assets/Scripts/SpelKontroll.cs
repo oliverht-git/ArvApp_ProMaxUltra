@@ -39,8 +39,10 @@ public class SpelKontroll : MonoBehaviour
             if (!motorcykel.Stannat) return;
             tidSedanKrasch += Time.deltaTime;
             var tb = Keyboard.current;
-            if (tidSedanKrasch > 0.8f && tb != null &&
-                (tb.rKey.wasPressedThisFrame || tb.spaceKey.wasPressedThisFrame || tb.enterKey.wasPressedThisFrame))
+            var jc = JoyConHanterare.Instans;
+            bool joyConKlick = jc != null && jc.Ansluten && jc.KlickTryckt;
+            if (tidSedanKrasch > 0.8f && (joyConKlick || (tb != null &&
+                (tb.rKey.wasPressedThisFrame || tb.spaceKey.wasPressedThisFrame || tb.enterKey.wasPressedThisFrame))))
                 SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
             return;
         }
@@ -91,7 +93,7 @@ public class SpelKontroll : MonoBehaviour
         GUI.color = new Color(1f, 1f, 1f, a);
         GUI.Label(new Rect(0, h * 0.44f, Screen.width, h * 0.08f), $"Du körde {Distans / 1000f:0.00} km", text);
         if (tidSedanKrasch > 0.8f)
-            GUI.Label(new Rect(0, h * 0.58f, Screen.width, h * 0.08f), "Tryck R eller Mellanslag för att köra igen", text);
+            GUI.Label(new Rect(0, h * 0.58f, Screen.width, h * 0.08f), "Tryck R, Mellanslag eller A på Joy-Con för att köra igen", text);
         GUI.color = Color.white;
     }
 }
